@@ -3,29 +3,51 @@
   <meta charset="utf-8" />
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>timeclock</title>  
+  <title>Productivity</title>  
   
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="app">
+    <div>
+      <h1>Productivity Calculator</h1>
+    </div>
 
-  <div>
-    <h1>Timeclock Calculator</h1>
-  </div>
-
-  <div class="wrapper">
-    <table>
-      <tr>
-        <th>In</th>
-        <th>Out</th>
-      </tr>
-      <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-      </tr>
-    </table>
+    <div class="wrapper">
+      <table>
+        <tr>
+          <th>Time In</th>
+          <th>Time Out</th>
+        </tr>
+        <tr>
+          <td><input type="text" v-bind:value=in1></td>
+          <td><input type="text" v-bind:value=out1></td>
+        </tr>
+        <tr>
+          <td><input type="text" v-bind:value=in2></td>
+          <td><input type="text" v-bind:value=out2></td>
+        </tr>
+        <tr>
+          <td><input type="text" v-bind:value=in3></td>
+          <td><input type="text" v-bind:value=out3></td>
+        </tr>
+        <tr>
+          <td><input type="text" v-bind:value=in4></td>
+          <td><input type="text" v-bind:value=out4></td>
+        </tr>
+        <tr>
+          <td>Tx minutes</td>
+          <td><input type="text" v-bind:value=txMinutes></td>
+        </tr>
+        <tr>
+          <td>Productivity %</td>
+          <td><input type="text" v-bind:value=productivity></td>
+        </tr>
+      </table>
+    </div>
   </div>
   <script src="javascript/vue.js"></script>
   <script src="javascript/app.js"></script>
+  
 </body>
 </html>
