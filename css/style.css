@@ -1,3 +1,53 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
 html {
   box-sizing: border-box;
 }
@@ -6,10 +56,11 @@ html {
 }
 
 body {
-  padding: 20px;
-  background: linear-gradient(rgba(28, 112, 132, 0.38), rgba(28, 112, 132, 0.38)), url('../images/symphony.png') fixed;
+  padding: 0;
+  margin: 0;
+  background: #0f101f;
   font-family: Arial, sans-serif;
-  color: rgb(13, 82, 99);
+  color: #a4c2d8;
 }
 
 input[type="text"] {
@@ -21,64 +72,57 @@ input[type="text"] {
   padding: 6px;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
   color: rgba(0,0,0,0.75);
-  display: block;
+  display: inline-block;
   height: 34px;
-  width: 100%;
-}
-
-h1 {
-  font-weight: normal;
-  text-align: center;
+  width: 44px;
 }
 
 table {
   table-layout: fixed;
   width: 320px;
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin: 0px auto;
+  margin: 20px auto 0;
 }
 
-td {
+td, th {
   font-size: 20px;
   padding:10px;
 }
 
 th {
-  font-size: 22px;
   font-weight:normal;
+  padding: 5px;
 }
 
-tr:last-child td, tr:nth-child(6) td {
-  text-align: left;
-  background: rgba(28, 112, 132, 0.44);
+tr.productivity, tr.tx-minutes {
+  background: #202241;
 }
 
-tr:last-child td:first-child,
-tr:nth-child(6) td:first-child {
-  padding-left: 15px;
+tr.productivity input, tr.tx-minutes input {
+  width: 100%;
 }
 
-tr:nth-child(5) td {
-  padding-bottom: 20px;
+.times th {
+  text-align: center;
 }
 
-table wrapper {
-  vertical-align:top
+.buttons {
+  width: 320px;
+  margin: 10px auto 0;
 }
 
-@media screen and (max-width: 767px) {
-  table {
-    width: auto !important;
-  }
+.btn {
+  padding: 10px;
+  width: 50%;
+  float: left;
+}
 
-  table col {
-    width: auto !important;
-  }
-
-  wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: auto 0px;
-    }
-  }
+button {
+  width: 100%;
+  height: 30px;
+  font-size: 16px;
+  color: white;
+  background: #6a6c8a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

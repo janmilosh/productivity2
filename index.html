@@ -9,41 +9,32 @@
 </head>
 <body>
   <div id="app">
-    <div>
-      <h1>Productivity Calculator</h1>
-    </div>
-
     <div class="wrapper">
-      <table>
-        <tr>
-          <th>Time In</th>
-          <th>Time Out</th>
-        </tr>
-        <tr>
-          <td><input type="text" v-bind:value=in1></td>
-          <td><input type="text" v-bind:value=out1></td>
-        </tr>
-        <tr>
-          <td><input type="text" v-bind:value=in2></td>
-          <td><input type="text" v-bind:value=out2></td>
-        </tr>
-        <tr>
-          <td><input type="text" v-bind:value=in3></td>
-          <td><input type="text" v-bind:value=out3></td>
-        </tr>
-        <tr>
-          <td><input type="text" v-bind:value=in4></td>
-          <td><input type="text" v-bind:value=out4></td>
-        </tr>
-        <tr>
+      <table class="">
+        <tr class="tx-minutes">
           <td>Tx minutes</td>
           <td><input type="text" v-bind:value=txMinutes></td>
         </tr>
-        <tr>
+        <tr class="productivity">
           <td>Productivity %</td>
           <td><input type="text" v-bind:value=productivity></td>
         </tr>
       </table>
+      <table class="times">
+        <col width="40%">
+        <col width="40%">
+        <col width="20%">
+        <tr>
+          <th>Time In</th><th>Time Out</th><th>Min.</th>
+        </tr>
+        <tr is="time-entry"></tr>
+        <tr is="time-entry"></tr>
+        
+      </table>
+      <div class="buttons">
+        <div class="btn"><button>Add Row</button></div>
+        <div class="btn"><button>Remove Row</button></div>
+      </div>
     </div>
   </div>
   <script src="javascript/vue.js"></script>
