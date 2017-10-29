@@ -93,6 +93,10 @@ th {
   padding: 5px;
 }
 
+td.minutes {
+  text-align: center;
+}
+
 tr.productivity, tr.tx-minutes {
   background: #202241;
 }
