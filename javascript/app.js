@@ -1,34 +1,51 @@
-Vue.component('time-entry', {
-  template:
-    '<tr>' +
-      '<td><input type="text" v-model:value=hourIn>&nbsp;:&nbsp;<input type="text" v-model:value=minIn></td>' +
-      '<td><input type="text" v-model:value=hourOut>&nbsp;:&nbsp;<input type="text" v-model:value=minOut></td>' +
-      '<td class="minutes">{{ entryMinutes }}</td>' +
-    '</tr>',
-  data: function() {
-    return {
-      hourIn: '10',
-      minIn: '01',
-      hourOut: '12',
-      minOut: '80'
-    }
-  },
-  computed: {
-    entryMinutes: function() {
-      if (!this.completeEntry()) {
-        return '---'
-      }
-      else {
-        return this.calculatedMinutes();
-      }
-    }
+var app = new Vue({
+  el: '#app',
+  data: {
+    productivity: '',
+    txMinutes: '',
+    totalMinutes: 0,
+    entries: [{
+      hourIn: '',
+      minIn: '',
+      hourOut: '',
+      minOut: '',
+      minutes: ''
+    }]
   },
   methods: {
-    completeEntry: function() {
-      return this.validHour(this.hourIn) &&
-             this.validHour(this.hourOut) &&
-             this.validMinute(this.minIn) &&
-             this.validMinute(this.minOut)
+    calculateTime: function() {
+      var that = this;
+      this.totalMinutes = 0;
+      this.entries.map(function(entry, index) {
+        var minutes = that.entryMinutes(entry);
+        that.totalMinutes += minutes;
+        return entry.minutes = minutes;
+      });
+      console.log(this.totalMinutes)
+    },
+    calculateProductivity: function() {
+      for (var i = 0; i < this.entries.length; i++) {
+        if (!this.completeEntry(this.entries[i])) {
+          console.log("Incomplete entry")
+          return false;
+        }
+      }
+      this.calculateTime()
+      this.productivity = ((this.txMinutes * 100)/this.totalMinutes).toFixed(1);       
+    },
+    entryMinutes: function(entry) {
+      if (!this.completeEntry(entry)) {
+        return 0
+      }
+      else {
+        return this.calculatedMinutes(entry);
+      }
+    },
+    completeEntry: function(entry) {
+      return this.validHour(entry.hourIn) &&
+             this.validMinute(entry.minIn) &&
+             this.validHour(entry.hourOut) &&
+             this.validMinute(entry.minOut)
     },
     validHour: function(numStr) {
       if (numStr.length === 0) {
@@ -44,9 +61,9 @@ Vue.component('time-entry', {
       var num = Number(numStr);
       return num >= 0 && num <= 59;
     },
-    calculatedMinutes: function() {
-      var inTime = this.timeInMinutes(this.hourIn, this.minIn);
-      var outTime = this.timeInMinutes(this.hourOut, this.minOut);
+    calculatedMinutes: function(entry) {
+      var inTime = this.timeInMinutes(entry.hourIn, entry.minIn);
+      var outTime = this.timeInMinutes(entry.hourOut, entry.minOut);
       if (outTime < inTime ) { outTime += 720; }
       return outTime - inTime;
     },
@@ -54,16 +71,21 @@ Vue.component('time-entry', {
       var hours = Number(hoursStr);
       var minutes = Number(minutesStr);
       return hours * 60 + minutes;
+    },
+    addEntry: function() {
+      this.entries.push({
+        hourIn: '',
+        minIn: '',
+        hourOut: '',
+        minOut: '',
+        minutes: ''
+      });
+    },
+    removeEntry: function() {
+      if (this.entries.length > 1) {
+        this.entries.pop();
+      }
+      console.log(this.entries);
     }
-  }
-})
-
-
-var app = new Vue({
-  el: '#app',
-  data: {
-    
-    productivity: '',
-    txMinutes: ''
   }
 })
