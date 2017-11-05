@@ -13,11 +13,11 @@
       <table>
         <tr class="tx-minutes">
           <td>Tx minutes</td>
-          <td><input type="text" v-model="txMinutes"></td>
+          <td><input type="text" id="tx-minutes" v-model="txMinutes"></td>
         </tr>
         <tr class="productivity">
           <td>Productivity %</td>
-          <td><input type="text" v-model="productivity"></td>
+          <td><input type="text" id="productivity" v-model="productivity"></td>
         </tr>
       </table>
       <table class="times">
@@ -27,17 +27,17 @@
         <tr>
           <th>Time In</th><th>Time Out</th><th>Min.</th>
         </tr>
-        <tr v-for="(entry, index) in entries">
-          <td><input type="text" v-model="entry.hourIn">&nbsp;:&nbsp;<input type="text" v-model="entry.minIn"></td>
-          <td><input type="text" v-model="entry.hourOut">&nbsp;:&nbsp;<input type="text" v-model="entry.minOut"></td>
+        <tr class="entry" v-for="(entry, index) in entries">
+          <td><input type="text" class="hour-in" v-model="entry.hourIn">&nbsp;:&nbsp;<input type="text" class="min-in" v-model="entry.minIn"></td>
+          <td><input type="text" class="hour-out" v-model="entry.hourOut">&nbsp;:&nbsp;<input type="text" class="min-out" v-model="entry.minOut"></td>
           <td class="minutes">{{ entry.minutes }}</td>
         </tr>
       </table>
       <div class="buttons">
-        <div class="btn"><button @click="addEntry">Add Row</button></div>
-        <div class="btn"><button @click="removeEntry">Remove Row</button></div>
-        <div class="btn"><button class="calculate" @click="calculateTime">Get Clock Out</button></div>
-        <div class="btn"><button class="calculate" @click="calculateProductivity">Get Productivity</button></div>
+        <div class="btn"><button id="add-row" @click="addEntry">Add Row</button></div>
+        <div class="btn"><button id="remove-row" @click="removeEntry">Remove Row</button></div>
+        <div class="btn"><button id="get-clockout" class="calculate" @click="calculateClockOut">Get Clock Out</button></div>
+        <div class="btn"><button id="get-productivity" class="calculate" @click="calculateProductivity">Get Productivity</button></div>
       </div>
     </div>
   </div>
