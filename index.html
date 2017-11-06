@@ -10,11 +10,11 @@
   <div id="app">
     <div class="wrapper">
       <table>
-        <tr class="tx-minutes">
+        <tr v-bind:class="{ 'invalid': !txMinutesValid, 'tx-minutes': true }">
           <td>Tx minutes</td>
           <td><input type="text" id="tx-minutes" v-model="txMinutes"></td>
         </tr>
-        <tr class="productivity">
+        <tr v-bind:class="{ 'invalid': !productivityValid, 'productivity': true }">
           <td>Productivity %</td>
           <td><input type="text" id="productivity" v-model="productivity"></td>
         </tr>

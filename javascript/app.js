@@ -19,9 +19,10 @@ var app = new Vue({
   methods: {
     calculateClockOut: function() {
       this.checkProductivityValidity();
+      this.checkTxMinutesValidity();
       var lastIndex = this.entries.length - 1;
       var lastClockInMinutes = this.lastClockInMinutes(lastIndex);
-      if (lastClockInMinutes && this.productivityValid) {
+      if (lastClockInMinutes && this.productivityValid && this.txMinutesValid) {
         this.calculateCompletedMinutes();
         this.totalMinutes = Math.round((Number(this.txMinutes) * 100)/Number(this.productivity));
         var neededMinutes = this.totalMinutes - this.completedMinutes;
@@ -38,6 +39,7 @@ var app = new Vue({
       this.checkTxMinutesValidity();
       if (this.allEntryRowsValid() && this.txMinutesValid) {
         this.productivity = ((this.txMinutes * 100)/this.totalMinutes).toFixed(1);
+        this.checkProductivityValidity();
       } else {
         console.log("Incomplete entry");
       }
@@ -56,7 +58,10 @@ var app = new Vue({
       this.completedMinutes = 0;
       for (var i = 0; i < this.entries.length - 1; i++) {
         if (this.validClockInAndOut(this.entries[i])) {
+          this.entries[i].valid = true;
           this.completedMinutes += this.entries[i].minutes;
+        } else {
+          this.entries[i].valid = false;
         }
       }
     },
@@ -71,18 +76,19 @@ var app = new Vue({
     },
     entryMinutes: function(entry) {
       if (this.validClockInAndOut(entry)) {
-        entry.valid = true;
         return this.calculatedMinutes(entry);
       }
       else {
-        entry.valid = false;
         return 0;
       }
     },
     allEntryRowsValid: function() {
       for (var i = 0; i < this.entries.length; i++) {
         if (!this.validClockInAndOut(this.entries[i])) {
+          this.entries[i].valid = false;
           return false;
+        } else {
+          this.entries[i].valid = true;
         }
       }
       return true;
@@ -149,7 +155,7 @@ var app = new Vue({
     },
     checkProductivityValidity: function() {
       var productivity = Number(this.productivity);
-      if (productivity >= 0 && productivity <= 100) {
+      if (productivity > 0 && productivity <= 100) {
         this.productivityValid = true;
         return true;
       } else {

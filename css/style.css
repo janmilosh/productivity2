@@ -135,6 +135,6 @@ button {
   background: #69a969;
 }
 
-tr.invalid {
+.invalid {
   border: 2px solid #b92525;
 }
