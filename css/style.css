@@ -134,3 +134,7 @@ button {
 .calculate {
   background: #69a969;
 }
+
+tr.invalid {
+  border: 2px solid #b92525;
+}

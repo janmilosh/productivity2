@@ -4,7 +4,6 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Productivity</title>  
-  
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -27,7 +26,7 @@
         <tr>
           <th>Time In</th><th>Time Out</th><th>Min.</th>
         </tr>
-        <tr class="entry" v-for="(entry, index) in entries">
+        <tr v-bind:class="{ 'invalid': !entry.valid, 'entry': true }" v-for="(entry, index) in entries">
           <td><input type="text" class="hour-in" v-model="entry.hourIn">&nbsp;:&nbsp;<input type="text" class="min-in" v-model="entry.minIn"></td>
           <td><input type="text" class="hour-out" v-model="entry.hourOut">&nbsp;:&nbsp;<input type="text" class="min-out" v-model="entry.minOut"></td>
           <td class="minutes">{{ entry.minutes }}</td>
@@ -43,6 +42,5 @@
   </div>
   <script src="javascript/vue.js"></script>
   <script src="javascript/app.js"></script>
-  
 </body>
 </html>
