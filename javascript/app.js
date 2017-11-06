@@ -2,7 +2,9 @@ var app = new Vue({
   el: '#app',
   data: {
     productivity: '',
+    productivityValid: true,
     txMinutes: '',
+    txMinutesValid: true,
     totalMinutes: 0,
     completedMinutes: 0,
     entries: [{
@@ -16,13 +18,14 @@ var app = new Vue({
   },
   methods: {
     calculateClockOut: function() {
+      this.checkProductivityValidity();
       var lastIndex = this.entries.length - 1;
-      this.calculateCompletedMinutes();
-      this.totalMinutes = Math.round((Number(this.txMinutes) * 100)/Number(this.productivity));
-      var neededMinutes = this.totalMinutes - this.completedMinutes;
       var lastClockInMinutes = this.lastClockInMinutes(lastIndex);
-      var lastClockOutMinutes = (neededMinutes + lastClockInMinutes) % 720;
-      if (lastClockInMinutes) {
+      if (lastClockInMinutes && this.productivityValid) {
+        this.calculateCompletedMinutes();
+        this.totalMinutes = Math.round((Number(this.txMinutes) * 100)/Number(this.productivity));
+        var neededMinutes = this.totalMinutes - this.completedMinutes;
+        var lastClockOutMinutes = (neededMinutes + lastClockInMinutes) % 720;
         this.entries[lastIndex].minutes = neededMinutes;
         this.entries[lastIndex].hourOut = Math.floor(lastClockOutMinutes / 60);
         this.entries[lastIndex].minOut = this.zeroPaddedStr(lastClockOutMinutes % 60);
@@ -32,7 +35,8 @@ var app = new Vue({
     },
     calculateProductivity: function() {
       this.calculateTime();
-      if (this.allEntryRowsValid()) {
+      this.checkTxMinutesValidity();
+      if (this.allEntryRowsValid() && this.txMinutesValid) {
         this.productivity = ((this.txMinutes * 100)/this.totalMinutes).toFixed(1);
       } else {
         console.log("Incomplete entry");
@@ -133,6 +137,29 @@ var app = new Vue({
         this.entries.pop();
       }
       console.log(this.entries);
+    },
+    checkTxMinutesValidity: function() {
+      if (this.isValidNumberString(this.txMinutes)) {
+        this.txMinutesValid = true;
+        return true;
+      } else {
+        this.txMinutesValid = false;
+        return false;
+      }
+    },
+    checkProductivityValidity: function() {
+      var productivity = Number(this.productivity);
+      if (productivity >= 0 && productivity <= 100) {
+        this.productivityValid = true;
+        return true;
+      } else {
+        this.productivityValid = false;
+        return false;
+      }
+    },
+    isValidNumberString: function(numStr) {
+      var re = re=/^\d+$/
+      return re.test(numStr);
     },
     zeroPaddedStr: function(num) {
       var numStr = num.toString();
