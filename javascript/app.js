@@ -18,12 +18,10 @@ var app = new Vue({
   },
   methods: {
     calculateClockOut: function() {
-      this.checkProductivityValidity();
-      this.checkTxMinutesValidity();
       var lastIndex = this.entries.length - 1;
       var lastClockInMinutes = this.lastClockInMinutes(lastIndex);
-      if (lastClockInMinutes && this.productivityValid && this.txMinutesValid) {
-        this.calculateCompletedMinutes();
+      if (this.validForCalculateClockOut()) {
+        this.calculateCompletedEntryMinutes();
         this.totalMinutes = Math.round((Number(this.txMinutes) * 100)/Number(this.productivity));
         var neededMinutes = this.totalMinutes - this.completedMinutes;
         var lastClockOutMinutes = (neededMinutes + lastClockInMinutes) % 720;
@@ -35,9 +33,8 @@ var app = new Vue({
       }
     },
     calculateProductivity: function() {
-      this.calculateTime();
-      this.checkTxMinutesValidity();
-      if (this.allEntryRowsValid() && this.txMinutesValid) {
+      this.processMinutes();
+      if (this.validForCalculateProductivity()) {
         this.productivity = ((this.txMinutes * 100)/this.totalMinutes).toFixed(1);
         this.checkProductivityValidity();
       } else {
@@ -46,52 +43,107 @@ var app = new Vue({
     },
     lastClockInMinutes: function(index) {
       var entry = this.entries[index];
-      if(this.validLastClockIn(entry)) {
-        entry.valid = true;
-        return 60 * Number(entry.hourIn) + Number(entry.minIn);
+      return 60 * Number(entry.hourIn) + Number(entry.minIn);
+    },
+    zeroPaddedStr: function(num) {
+      var numStr = num.toString();
+      if (numStr.length === 1) {
+        return '0' + numStr;
       } else {
-        entry.valid = false;
+        return numStr;
       }
     },
-    calculateCompletedMinutes: function() {
-      this.calculateTime();
+    calculateCompletedEntryMinutes: function() {
+      this.processMinutes();
       this.completedMinutes = 0;
       for (var i = 0; i < this.entries.length - 1; i++) {
-        if (this.validClockInAndOut(this.entries[i])) {
-          this.entries[i].valid = true;
-          this.completedMinutes += this.entries[i].minutes;
-        } else {
-          this.entries[i].valid = false;
-        }
+        this.completedMinutes += this.entries[i].minutes;
       }
     },
-    calculateTime: function() {
+    processMinutes: function() {
       var that = this;
       this.totalMinutes = 0;
-      this.entries.map(function(entry, index) {
+      this.entries.forEach(function(entry, index) {
         var minutes = that.entryMinutes(entry);
         that.totalMinutes += minutes;
         entry.minutes = minutes;
       });
     },
     entryMinutes: function(entry) {
+      var inTime = this.timeEntryConvertedToMinutes(entry.hourIn, entry.minIn);
+      var outTime = this.timeEntryConvertedToMinutes(entry.hourOut, entry.minOut);
       if (this.validClockInAndOut(entry)) {
-        return this.calculatedMinutes(entry);
+        if (outTime < inTime ) { outTime += 720; }
+        return outTime - inTime;;
       }
       else {
         return 0;
       }
     },
-    allEntryRowsValid: function() {
-      for (var i = 0; i < this.entries.length; i++) {
-        if (!this.validClockInAndOut(this.entries[i])) {
-          this.entries[i].valid = false;
-          return false;
-        } else {
-          this.entries[i].valid = true;
-        }
+    timeEntryConvertedToMinutes: function(hoursStr, minutesStr) {
+      var hours = Number(hoursStr);
+      var minutes = Number(minutesStr);
+      return hours * 60 + minutes;
+    },
+    addEntry: function() {
+      this.entries.push({
+        hourIn: '',
+        minIn: '',
+        hourOut: '',
+        minOut: '',
+        minutes: '',
+        valid: true
+      });
+    },
+    removeEntry: function() {
+      if (this.entries.length > 1) {
+        this.entries.pop();
       }
-      return true;
+    },
+    validForCalculateProductivity: function() {
+      var that = this;
+      var txMinutesValid = this.checkTxMinutesValidity();
+      this.entries.forEach(function(entry) {
+        return entry.valid = that.validClockInAndOut(entry);
+      });
+      return txMinutesValid && this.allTimeEntriesValid();
+    },
+    validForCalculateClockOut: function() {
+      var productivityValid = this.checkProductivityValidity();
+      var txMinutesValid = this.checkTxMinutesValidity();
+      var lastEntry = this.entries[this.entries.length - 1];
+      for (var i = 0; i < this.entries.length - 1; i++) {
+        this.entries[i].valid = this.validClockInAndOut(this.entries[i]);
+      };
+      lastEntry.valid = this.validLastClockIn(lastEntry);
+      return txMinutesValid && productivityValid && this.allTimeEntriesValid();
+    },
+    allTimeEntriesValid: function() {
+      for (var i = 0; i < this.entries.length; i++) {
+        if (!this.entries[i].valid) {
+          return false;
+        }
+        return true;
+      }
+    },
+    checkTxMinutesValidity: function() {
+      if (this.isValidNumberString(this.txMinutes)) {
+        this.txMinutesValid = true;
+        return true;
+      } else {
+        this.txMinutesValid = false;
+        return false;
+      }
+    },
+    checkProductivityValidity: function() {
+      var productivity = Number(this.productivity);
+      if (productivity > 0 && productivity <= 100) {
+        this.productivityValid = true;
+        return true;
+      } else {
+        this.productivityValid = false;
+        return false;
+      }
     },
     validLastClockIn: function(entry) {
       return this.validHour(entry.hourIn) &&
@@ -117,63 +169,9 @@ var app = new Vue({
       var num = Number(numStr);
       return num >= 0 && num <= 59;
     },
-    calculatedMinutes: function(entry) {
-      var inTime = this.timeInMinutes(entry.hourIn, entry.minIn);
-      var outTime = this.timeInMinutes(entry.hourOut, entry.minOut);
-      if (outTime < inTime ) { outTime += 720; }
-      return outTime - inTime;
-    },
-    timeInMinutes: function(hoursStr, minutesStr) {
-      var hours = Number(hoursStr);
-      var minutes = Number(minutesStr);
-      return hours * 60 + minutes;
-    },
-    addEntry: function() {
-      this.entries.push({
-        hourIn: '',
-        minIn: '',
-        hourOut: '',
-        minOut: '',
-        minutes: '',
-        valid: true
-      });
-    },
-    removeEntry: function() {
-      if (this.entries.length > 1) {
-        this.entries.pop();
-      }
-      console.log(this.entries);
-    },
-    checkTxMinutesValidity: function() {
-      if (this.isValidNumberString(this.txMinutes)) {
-        this.txMinutesValid = true;
-        return true;
-      } else {
-        this.txMinutesValid = false;
-        return false;
-      }
-    },
-    checkProductivityValidity: function() {
-      var productivity = Number(this.productivity);
-      if (productivity > 0 && productivity <= 100) {
-        this.productivityValid = true;
-        return true;
-      } else {
-        this.productivityValid = false;
-        return false;
-      }
-    },
     isValidNumberString: function(numStr) {
       var re = re=/^\d+$/
       return re.test(numStr);
-    },
-    zeroPaddedStr: function(num) {
-      var numStr = num.toString();
-      if (numStr.length === 1) {
-        return '0' + numStr;
-      } else {
-        return numStr;
-      }
     }
   }
 })
